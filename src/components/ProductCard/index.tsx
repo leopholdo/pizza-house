@@ -8,29 +8,40 @@ import {
 import { styles } from "./style";
 
 type Props = TouchableOpacityProps & {
-  product: {
-    image: string,
-    title: string,
-    subtitle: string,
-  }
+  product: Product
 }
 
-export default function ProductCard({product, ...rest}: Props) {
+export default function ProductCard({
+  product,
+  ...rest
+}: Props) {
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.8} {...rest}>
-      <Image 
-        resizeMode="cover"
-        source={{ uri: product.image }}
-        style={styles.image}/>
-
       <View style={styles.description}>
         <Text style={styles.descriptionTitle}>
-          { product.title }
+          { product.name }
         </Text>
+        
         <Text style={styles.descriptionSubtitle}>
-          { product.subtitle }
+          { 'A partir de ' + 
+            product.sizes[0].price.toLocaleString('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
+            }) 
+          }
+        </Text>
+
+        <Text style={styles.descriptionText}>
+          { product.description }
         </Text>
       </View>
+      {
+        product.image != '' &&
+        <Image 
+          resizeMode="cover"
+          source={{ uri: product.image }}
+          style={styles.image}/>
+      }
     </TouchableOpacity>
   )
 }

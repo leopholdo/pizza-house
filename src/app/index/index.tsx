@@ -6,13 +6,26 @@ import { Tab, TabView } from '@rneui/themed';
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons"
 import { LinearGradient } from "expo-linear-gradient"
 
-import Destaques from "../destaques";
-import PizzaSalgadas from "../pizzaSalgadas";
 import { useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useEffect } from 'react';
+import { services } from "@/services"
 
-export default function Home() {
+import FeaturedProductTabView from '@/components/FeaturedProductTabView'
+import ProductTabView from "@/components/ProductTabView";
+
+export default function Index() {
   const [index, setIndex] = useState(0);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const categories = services.categories.getCategories();
+    setCategories(categories);
+
+    const featuredProducts = services.products.getFeaturedProducts();
+    setFeaturedProducts(featuredProducts);
+  }, [])
 
   return (
     <View style={styles.container}>
@@ -44,24 +57,34 @@ export default function Home() {
             titleStyle={styles.tabTitleStyle}
             style={styles.tab}>
             <Tab.Item>Destaques</Tab.Item>
-            <Tab.Item>Pizzas Salgadas</Tab.Item>
-            {/* <Tab.Item>Pizzas Doces</Tab.Item> */}
+
+            { categories.map(cat => (
+              <Tab.Item key={cat.id}>{ cat.name }</Tab.Item>
+            ))}
           </Tab>
         </LinearGradient>
       </ImageBackground>
 
       <View style={styles.body}>
         <SafeAreaProvider>
-          <TabView value={index} onChange={setIndex} animationType="spring">
+          <TabView
+            minSwipeSpeed={0.4}
+            value={index} 
+            onChange={setIndex} 
+            animationType="spring">
             <TabView.Item style={styles.tabItem}>
-              <Destaques/>
+              <FeaturedProductTabView
+                products={featuredProducts}
+              ></FeaturedProductTabView>
             </TabView.Item>
-            <TabView.Item style={styles.tabItem}>
-              <PizzaSalgadas/>
-            </TabView.Item>
-            <TabView.Item style={styles.tabItem}>
-              {/* <PizzaD/> */}
-            </TabView.Item>
+
+            { categories.map(cat => (
+              <TabView.Item key={cat.id} style={styles.tabItem}>
+                <ProductTabView
+                  category_id={cat.id}
+                ></ProductTabView>
+              </TabView.Item>
+            ))}            
           </TabView>
         </SafeAreaProvider>
       </View>

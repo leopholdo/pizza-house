@@ -1,5 +1,6 @@
 export const colors = {
   primary: "#FF7A00",
+  primary_alt: "#FF8B00",
 
   white: "#FFFFFF",
   black: "#000000",

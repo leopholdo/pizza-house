@@ -3,21 +3,24 @@ import { theme } from "@/theme"
 
 export const styles = StyleSheet.create({
   card: {
-    height: 150,
+    flex: 1,
     backgroundColor: theme.colors.gray_100,
     borderRadius: 20,
-    marginVertical: 10
+    marginVertical: 10,
+    flexDirection: 'row'
   },
   image: {
+    marginLeft: 'auto',
     alignSelf: 'center',
     justifyContent: 'center',
-    borderTopLeftRadius: 20,
+    borderBottomRightRadius: 20,
     borderTopRightRadius: 20,
-    width: "100%",
-    height: 90,
+    flex: 1,
+    height: "100%",
   },
   description: {
-    padding: 10,
+    padding: 15,
+    flex: 3
   },
   descriptionTitle: {
     color: theme.colors.primary,
@@ -28,5 +31,10 @@ export const styles = StyleSheet.create({
     color: theme.colors.primary,
     fontFamily: theme.fonts.family.regular,
     fontSize: theme.fonts.size.body.xs
+  },
+  descriptionText: {
+    color: theme.colors.gray_400,
+    fontFamily: theme.fonts.family.medium,
+    fontSize: theme.fonts.size.body.sm
   }
 })

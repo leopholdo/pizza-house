@@ -30,15 +30,12 @@ export const styles = StyleSheet.create({
   },
   body: {
     marginTop: -40,
-    borderTopStartRadius: 20,
-    borderTopEndRadius: 20,
     backgroundColor: "#fff",
     flex: 1
   },
   tab: {
     marginTop: 'auto', 
     marginBottom: 40, 
-    marginLeft: 20
   },
   tabIndicatorStyle: {
     backgroundColor: '#FF7A00'
