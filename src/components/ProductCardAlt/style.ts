@@ -1,10 +1,10 @@
-import { StyleSheet } from "react-native"
-import { theme } from "@/theme"
+import { fonts } from "@/theme"
+import { makeStyles } from "@rneui/themed"
 
-export const styles = StyleSheet.create({
+export const useStyles = makeStyles((theme) => ({
   card: {
     height: 150,
-    backgroundColor: theme.colors.gray_100,
+    backgroundColor: theme.colors.grey1,
     borderRadius: 20,
     marginVertical: 10
   },
@@ -21,12 +21,12 @@ export const styles = StyleSheet.create({
   },
   descriptionTitle: {
     color: theme.colors.primary,
-    fontFamily: theme.fonts.family.medium,
-    fontSize: theme.fonts.size.body.sm
+    fontFamily: fonts.family.medium,
+    fontSize: fonts.size.body.sm
   },
   descriptionSubtitle: {
     color: theme.colors.primary,
-    fontFamily: theme.fonts.family.regular,
-    fontSize: theme.fonts.size.body.xs
+    fontFamily: fonts.family.regular,
+    fontSize: fonts.size.body.xs
   }
-})
+}))

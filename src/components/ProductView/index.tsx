@@ -1,120 +1,75 @@
 import { View, Text, ImageBackground, TouchableOpacity } from "react-native"
 import { ListItem } from "@rneui/base"
-import { Button } from '@rneui/themed';
+import { Button, useTheme } from '@rneui/themed';
 import SizeOption from "@/components/SizeOption";
-import { router } from "expo-router"
 
-import { styles } from "./styles"
-import { useState } from "react";
+import { useStyles } from "./styles"
+import { useEffect, useState } from "react";
 
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons"
 import Feather from "@expo/vector-icons/Feather"
 import { LinearGradient } from "expo-linear-gradient"
-import { theme } from '@/theme'
+import Toast from 'react-native-toast-message';
+
+import { services } from "@/services";
+
+import { useDispatch } from "react-redux";
+import { addOrder } from "@/store/reducers/cart";
 
 import Animated, {
   interpolate,
   useAnimatedRef,
   useAnimatedStyle,
-  useScrollViewOffset
+  useScrollViewOffset,
+  SlideOutDown, 
+  SlideInDown
 } from 'react-native-reanimated';
 
-type SizeOption = {
-  type: string,
-  slices: number,
-  price: number
+type Props = {
+  product: Product,
+  category: Category | undefined,
+  onBack: () => void
 }
 
-type Product = {
-  id: number,
-  image: string,
-  title: string,
-  subtitle: string,
-  text: string,
-  sizeOptions?: SizeOption[],
-  additionalOptionsIDs?: number[]
-  additionalOptions?: AdditionalOption[]
-}
+export default function ProductView({product, category, onBack, ...rest}: Props) {    
+  const { theme } = useTheme();
+  const styles = useStyles();
+  
+  const [errors, setErrors] = useState({
+    size: false
+  }); 
+  const [loading, setLoading] = useState({
+    btnSubmit: false
+  }); 
+  const [isFormValid, setIsFormValid] = useState(false); 
+  const [hasRendered, setHasRendered] = useState(false); 
 
-type AdditionalOption = {
-  id: number,
-  name: string,
-  price: number
-}
+  const [additionalItems, setAdditionalItems] = useState<AdditionalItem[]>()
 
-const additionalOptions: AdditionalOption[] = [
-  {
-    id: 0,
-    name: 'Bacon',
-    price: 17.9
-  },
-  {
-    id: 1,
-    name: 'Catupiry',
-    price: 17.9
-  },
-  {
-    id: 2,
-    name: 'Milho',
-    price: 8.5
-  },
-  {
-    id: 3,
-    name: 'Cebola',
-    price: 6.9
-  },
-  {
-    id: 4,
-    name: 'Palmito',
-    price: 14.9
-  },
-  {
-    id: 5,
-    name: 'Cheddar',
-    price: 17.9
-  },
-  {
-    id: 6,
-    name: 'Provolone',
-    price: 17.9
-  },
-]
-
-const product: Product = {
-  id: 0,
-  image: "https://i.ibb.co/hXPXvhZ/pizza-gourmet-recem-assada-em-mesa-de-madeira-rustica-gerada-por-ia.jpg",
-  title: "Pizza de calabresa",
-  subtitle: "A partir de R$ 23,90",
-  text: "Molho de tomate de casa, calabresa artesanal, mozzarella, orégano.",
-  additionalOptionsIDs: [0, 1, 2],
-  sizeOptions: [
-    {
-      type: 'Pequena',
-      slices: 4,
-      price: 23.9,
-    },
-    {
-      type: 'Média',
-      slices: 8,
-      price: 43.9,
-    },
-    {
-      type: 'Grande',
-      slices: 12,
-      price: 51.9,
-    },
-  ]
-};
-
-export default function Home() {
+  const [selectedAdditional, setSelectedAdditional] = useState<AdditionalItem[]>([])
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
-  const [selectedAdditional, setSelectedAdditional] = useState<AdditionalOption[]>([])
   const [quantity, setQuantity] = useState(1)
 
-  const [totalPrice, setTotalPrice] = useState(0)
+  const [subTotalPrice, setSubTotalPrice] = useState(0)
 
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const additionalItems = services.additionalItems.getAdditionalItems(category?.value);
+
+    setAdditionalItems(additionalItems);
+  }, [])
+
+  useEffect(() => {
+    if(hasRendered){
+      validate()
+    }
+    else {
+      setHasRendered(true)
+    }
+  }, [selectedSize])
 
   const imageAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -133,34 +88,101 @@ export default function Home() {
     };
   });
 
-  function handleToggleSize(index: number) {
-    if (!product.sizeOptions) return;
+  async function validate() {
+    let errors = {
+      size: false
+    };
 
-    if (selectedSize != null) {
-      let lastSize = product.sizeOptions[selectedSize];
-      setTotalPrice((price) => price - lastSize.price);
+    if(product.sizes.length && selectedSize == null) {
+      errors.size = true
+
+      Toast.show({
+        type: 'error',
+        text1: 'Atenção!',
+        text2: 'Por favor, selecione um tamanho.',
+        position: 'bottom'
+      });
     }
 
-    let actualSize = product.sizeOptions[index];
-    setTotalPrice((price) => price + actualSize.price);
+    await setErrors(errors)
+    await setIsFormValid(Object.keys(errors).length === 0); 
+  }
+
+  function handleToggleSize(index: number) {
+    if (selectedSize != null) {
+      let lastSize = product.sizes[selectedSize];
+      setSubTotalPrice((price) => price - lastSize.price);
+    }
+
+    let actualSize = product.sizes[index];
+    setSubTotalPrice((price) => price + actualSize.price);
 
     setSelectedSize(index)
   }
 
-  function handleToggleAdditional(option: AdditionalOption) {
+  function handleToggleAdditional(option: AdditionalItem) {
     if (selectedAdditional.includes(option)) {
       setSelectedAdditional((state) => state.filter((item) => item !== option))
-      setTotalPrice((price) => price - option.price)
+      setSubTotalPrice((price) => price - option.price)
 
       return
     }
 
     setSelectedAdditional((state) => [...state, option])
-    setTotalPrice((price) => price + option.price)
+    setSubTotalPrice((price) => price + option.price)
+  }
+
+  async function handlePressNext() {
+    await validate()
+
+    if(selectedSize === null || errors.size) {
+      Toast.show({
+        type: 'error',
+        text1: 'Atenção!',
+        text2: 'Por favor, selecione um tamanho.',
+        position: 'bottom'
+      });
+
+      return;
+    }
+
+    if(isFormValid) return;
+
+    setLoading((prev) => ({
+      ...prev,
+      btnSubmit: true
+    }));
+
+    const order = {
+      product: product,
+      additionalItems: selectedAdditional ?? [],
+      size: product.sizes[selectedSize],
+      quantity: quantity,
+      subTotal: subTotalPrice, 
+      total: subTotalPrice * quantity
+    }
+
+    dispatch(addOrder(order));
+
+    setLoading((prev) => ({
+      ...prev,
+      btnSubmit: false
+    }));
+
+    Toast.show({
+      type: 'success',
+      text2: 'Produto adicionado ao carrinho.',
+      position: 'bottom'
+    });
+
+    onBack();
   }
 
   return (
-    <View style={styles.container}>
+    <Animated.View 
+      entering={SlideInDown.duration(200)}
+      exiting={SlideOutDown.duration(200)}
+      style={styles.container}>
       <Animated.ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
@@ -173,14 +195,6 @@ export default function Home() {
             <LinearGradient
               colors={["rgba(0,0,0,0)", "#000"]}
               style={styles.linear}>
-              <View style={styles.header}>
-                <MaterialCommunityIcons
-                  size={25}
-                  color="#fff"
-                  name="basket-outline"
-                  onPress={() => { }}
-                />
-              </View>
             </LinearGradient>
           </ImageBackground>
         </Animated.View>
@@ -192,31 +206,29 @@ export default function Home() {
               size={35}
               color="#FF8F28"
               name="chevron-left"
-              onPress={() => { router.back() }}
+              onPress={onBack}
             />
             <Text style={styles.title}>
-              {product.title}
+              {product.name}
             </Text>
           </View>
 
           <Text style={styles.descriptionText}>
-            {product.text}
+            {product.description}
           </Text>
 
           {
-            product.sizeOptions?.length &&
+            product.sizes?.length &&
             <View>
-              <Text style={styles.sectionTitle}>
+              <Text style={[styles.sectionTitle, errors.size && styles.hasError]}>
                 Tamanho *
               </Text>
 
               <View style={styles.sizeWrapper}>
-                {product.sizeOptions.map((option, index) => (
+                {product.sizes.map((option, index) => (
                   <SizeOption
                     key={index}
-                    type={option.type}
-                    slices={option.slices}
-                    price={option.price}
+                    sizeOption={option}
                     selected={index == selectedSize}
                     onPress={() => handleToggleSize(index)}
                   ></SizeOption>
@@ -226,13 +238,13 @@ export default function Home() {
           }
 
           {
-            additionalOptions.length &&
+            additionalItems?.length &&
             <View>
               <Text style={styles.sectionTitle}>
                 Adicionais
               </Text>
 
-              {additionalOptions.map((option) => (
+              {additionalItems.map((option) => (
                 <ListItem
                   bottomDivider
                   containerStyle={{ paddingHorizontal: 5, paddingVertical: 5 }}
@@ -274,7 +286,7 @@ export default function Home() {
             onPress={() => { setQuantity(quantity - 1) }}>
             <Feather
               size={25}
-              color={quantity == 1 ? theme.colors.gray_300 : "#FF8F28"}
+              color={quantity == 1 ? theme.colors.grey3 : "#FF8F28"}
               name="minus"
             />
           </TouchableOpacity>
@@ -288,13 +300,14 @@ export default function Home() {
             onPress={() => { setQuantity(quantity + 1) }}>
             <Feather
               size={25}
-              color={quantity == 99 ? theme.colors.gray_300 : "#FF8F28"}
+              color={quantity == 99 ? theme.colors.grey3 : "#FF8F28"}
               name="plus"
             />
           </TouchableOpacity>
         </View>
 
         <Button
+          loading={loading.btnSubmit}
           size="md"
           ViewComponent={LinearGradient}
           linearGradientProps={{
@@ -303,14 +316,15 @@ export default function Home() {
             end: { x: 1, y: 0.9 },
           }}
           buttonStyle={styles.btnAdd}
-          containerStyle={{ flex: 1, maxWidth: 250 }}>
+          containerStyle={{ flex: 1, maxWidth: 250 }}
+          onPress={handlePressNext}>
           <View style={styles.btnAddContainer}>
             <Text style={styles.btnAddText}>
               Adicionar
             </Text>
             <Text style={styles.btnAddText}>
               {
-                Math.abs(totalPrice * quantity).toLocaleString('pt-BR', {
+                Math.abs(subTotalPrice * quantity).toLocaleString('pt-BR', {
                   style: 'currency',
                   currency: 'BRL',
                 })
@@ -319,6 +333,8 @@ export default function Home() {
           </View>
         </Button>
       </View>
-    </View>
+      <Toast />
+
+    </Animated.View>
   )
 }

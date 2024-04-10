@@ -1,9 +1,10 @@
 type Category = {
   id: number,
-  name: string
+  name: string,
+  value: string
 }
 
-type Sizes = {
+type Size = {
   name: string,
   additionalInfo: string,
   price: number
@@ -15,5 +16,21 @@ type Product = {
   image: string,
   description: string,
   category_id: number,
-  sizes: Sizes[]
+  sizes: Size[]
+}
+
+type AdditionalItem = {
+  id: number,
+  name: string,
+  price: number,
+  type: string[]
+}
+
+type Order = {
+  product: Product,
+  additionalItems: AdditionalItem[] | [],
+  size: Size,
+  quantity: number,
+  subTotal: number
+  total: number
 }

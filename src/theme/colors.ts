@@ -1,17 +1,33 @@
-export const colors = {
+export const lightColors = {
   primary: "#FF7A00",
-  primary_alt: "#FF8B00",
+  secondary: "#FF8B00",
+
+  background: '#f0f0f0',
+
+  error: '#ed2929',
 
   white: "#FFFFFF",
   black: "#000000",
 
-  green_100: "#DCFCE7",
-  green_600: "#15803D",
+  grey1: "#F0F0F0",
+  grey2: "#C4C4CC",
+  grey3: "#8D8D99",
+  grey4: "#7C7C8A",
+}
 
-  yellow_500: "#EFB103",
+export const darkColors = {
+  primary: "#FF7A00",
+  secondary: "#FF8B00",
 
-  gray_100: "#F0F0F0",
-  gray_200: "#C4C4CC",
-  gray_300: "#8D8D99",
-  gray_400: "#7C7C8A",
+  background: '#000',
+
+  error: '#ed2929',
+
+  white: "#FFFFFF",
+  black: "#000000",
+
+  grey1: "#F0F0F0",
+  grey2: "#C4C4CC",
+  grey3: "#8D8D99",
+  grey4: "#7C7C8A",
 }

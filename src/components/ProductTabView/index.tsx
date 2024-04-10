@@ -4,24 +4,25 @@ import {
   ScrollView
 } from "react-native";
 import { useEffect, useState } from "react";
-import { router } from "expo-router"
 
-import { styles } from "./style";
+import { useStyles } from "./style";
 
 import { services } from "@/services";
 
 import ProductCard from "../ProductCard";
 
 type Props = TouchableOpacityProps & {
-  category_id: number
+  category_id: number,
+  onSelectProduct: (product: Product) => void
 }
 
-export default function ProductTabView({category_id, ...rest}: Props) {
+export default function ProductTabView({category_id, onSelectProduct, ...rest}: Props) {
+  const styles = useStyles();
+
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     const products = services.products.getProducts(category_id);
-    console.log(products);
 
     setProducts(products);
   },[])
@@ -33,7 +34,7 @@ export default function ProductTabView({category_id, ...rest}: Props) {
           <ProductCard
             key={index}
             product={product}
-            onPress={() => router.navigate("/product/" + product.id)}
+            onPress={() => onSelectProduct(product)}
           ></ProductCard>
         ))}
       </ScrollView>

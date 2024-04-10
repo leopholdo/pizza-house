@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   TouchableOpacityProps
 } from "react-native";
-import { styles } from "./style";
+import { useStyles } from "./style";
 
 type Props = TouchableOpacityProps & {
   product: Product
@@ -15,6 +15,8 @@ export default function ProductCardAlt({
   product,
   ...rest
 }: Props) {
+  const styles = useStyles();
+
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.8} {...rest}>
       <Image 

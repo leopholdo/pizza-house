@@ -1,8 +1,8 @@
-import { StyleSheet } from "react-native"
+import { makeStyles } from "@rneui/themed"
 
-export const styles = StyleSheet.create({
+export const useStyles = makeStyles((theme) => ({
   tabView: {
     flex: 1,
     paddingHorizontal: 10
   }
-})
+}))

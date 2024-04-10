@@ -1,11 +1,14 @@
-import { StyleSheet } from "react-native"
-import { theme } from "@/theme"
+import { fonts } from "@/theme"
+import { makeStyles } from "@rneui/themed"
+import Constants from 'expo-constants';
 
-export const styles = StyleSheet.create({
+export const useStyles = makeStyles((theme) => ({
   container: { 
     flex: 1,
+    zIndex: 1,
     overflow: "hidden",
     backgroundColor: theme.colors.black,
+    paddingTop: Constants.statusBarHeight,
   },
   image: {
     width: "100%",
@@ -19,13 +22,13 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 30,
+    marginTop: 10,
     marginLeft: 20,
     marginRight: 20,
   },
   title: {
-    fontSize: theme.fonts.size.heading.xl,
-    fontFamily: theme.fonts.family.bold,
+    fontSize: fonts.size.heading.xl,
+    fontFamily: fonts.family.bold,
     color: theme.colors.white
   },
   body: {
@@ -48,4 +51,4 @@ export const styles = StyleSheet.create({
   tabItem: {
     width: '100%'
   }
-})
+}))

@@ -7,26 +7,22 @@ import {
 } from "react-native";
 
 import { 
-  sizeStyles,
-  sizeActiveStyles 
+  useStyles,
+  useActiveStyles 
 } from "./style";
 
 type Props = TouchableOpacityProps & {
-  type: string,
-  slices: number,
-  price: number,
+  sizeOption: Size,
   selected?: boolean
 }
 
 export default function ProductCard({
-  type, 
-  slices,
-  price,
+  sizeOption,
   selected = false,
   ...rest
 }: Props) {
 
-  const styles = selected ? sizeActiveStyles : sizeStyles;
+  const styles = selected ? useActiveStyles() : useStyles();
 
   return (
     <TouchableOpacity 
@@ -34,13 +30,13 @@ export default function ProductCard({
       activeOpacity={0.8}
       { ...rest }>
       <Text style={styles.sizeTitle}>
-        {type}
+        {sizeOption.name}
       </Text>
       <Text style={styles.sizeSubtitle}>
-        {slices} fatias
+        {sizeOption.additionalInfo}
       </Text>
       <Text style={[styles.sizeTitle, {marginTop: 5}]}>
-        {price.toLocaleString('pt-BR', {
+        {sizeOption.price.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL',
         })}

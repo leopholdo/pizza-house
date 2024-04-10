@@ -1,14 +1,17 @@
 export default [
   {
     id: 0,
-    name: 'Pizzas salgadas'
+    name: 'Pizzas salgadas',
+    value: 'salgado'
   },
   {
     id: 1,
-    name: 'Pizzas doces'
+    name: 'Pizzas doces',
+    value: 'doce'
   },
   {
     id: 2,
-    name: 'Bebidas'
+    name: 'Bebidas',
+    value: 'bebida'
   },
 ]

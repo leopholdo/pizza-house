@@ -1,7 +1,7 @@
-import { StyleSheet } from "react-native"
-import { theme } from "@/theme"
+import { fonts } from "@/theme"
+import { makeStyles } from "@rneui/themed"
 
-export const styles = StyleSheet.create({
+export const useStyles = makeStyles((theme) => ({
   container: { 
     flex: 1,
     overflow: "hidden",
@@ -22,8 +22,8 @@ export const styles = StyleSheet.create({
     marginTop: 30,
   },
   title: {
-    fontSize: theme.fonts.size.heading.lg,
-    fontFamily: theme.fonts.family.bold,
+    fontSize: fonts.size.heading.lg,
+    fontFamily: fonts.family.bold,
     color: theme.colors.primary
   },
   body: {
@@ -43,15 +43,15 @@ export const styles = StyleSheet.create({
   },
   descriptionText: {
     marginTop: 10,
-    color: theme.colors.gray_400,
-    fontFamily: theme.fonts.family.medium,
-    fontSize: theme.fonts.size.body.sm
+    color: theme.colors.grey4,
+    fontFamily: fonts.family.medium,
+    fontSize: fonts.size.body.sm
   },
   sectionTitle: {
     marginTop: 15,
-    color: theme.colors.gray_400,
-    fontFamily: theme.fonts.family.medium,
-    fontSize: theme.fonts.size.body.md
+    color: theme.colors.grey4,
+    fontFamily: fonts.family.medium,
+    fontSize: fonts.size.body.md
   },
   sizeWrapper: {
     flexDirection: 'row',
@@ -60,12 +60,12 @@ export const styles = StyleSheet.create({
     marginTop: 5
   },
   listOptionTitle: {
-    fontFamily: theme.fonts.family.medium,
-    fontSize: theme.fonts.size.body.md
+    fontFamily: fonts.family.medium,
+    fontSize: fonts.size.body.md
   },
   listOptionSubtitle: {
-    fontFamily: theme.fonts.family.regular,
-    color: theme.colors.gray_400,
+    fontFamily: fonts.family.regular,
+    color: theme.colors.grey4,
   },
   bottomContainer: {
     backgroundColor: theme.colors.white,
@@ -86,17 +86,17 @@ export const styles = StyleSheet.create({
   quantity: {
     width: 25,
     textAlign: 'center',
-    fontFamily: theme.fonts.family.medium,
-    fontSize: theme.fonts.size.heading.sm
+    fontFamily: fonts.family.medium,
+    fontSize: fonts.size.heading.sm
   },
   btnAdd: {
     borderRadius: 5,
-    fontFamily: theme.fonts.family.medium,
+    fontFamily: fonts.family.medium,
   },
   btnAddText: {
     color: theme.colors.white,
-    fontFamily: theme.fonts.family.medium,
-    fontSize: theme.fonts.size.body.md
+    fontFamily: fonts.family.medium,
+    fontSize: fonts.size.body.md
   },
   btnAddContainer: {
     width: '100%', 
@@ -104,5 +104,8 @@ export const styles = StyleSheet.create({
     flexDirection: 'row', 
     flexWrap: 'wrap',
     justifyContent: 'space-between'
+  },
+  hasError: {
+    color: theme.colors.error
   }
-})
+}))

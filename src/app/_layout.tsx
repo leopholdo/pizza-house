@@ -1,7 +1,21 @@
 import * as SplashScreen from 'expo-splash-screen';
-import { Slot } from "expo-router"
-
+import { Slot, Stack } from "expo-router"
 import { StatusBar } from "expo-status-bar"
+import { store, persistor } from '@/store';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+
+import { 
+  lightColors, 
+  createTheme, 
+  darkColors, 
+  ThemeProvider  
+} from '@rneui/themed';
+
+import { 
+  lightColors as LColors,  
+  darkColors as DColors
+} from '@/theme/colors';
 
 import {
   useFonts,
@@ -16,6 +30,12 @@ export {
 
 SplashScreen.preventAutoHideAsync();
 
+const theme = createTheme({
+  lightColors: LColors,
+  darkColors: DColors,  
+  mode: 'light',
+});
+
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     Poppins_700Bold,
@@ -24,15 +44,22 @@ export default function RootLayout() {
   })
 
   if (!fontsLoaded) {
-    return
+    return;
   }
-
-  SplashScreen.hideAsync()
+ 
+  SplashScreen.hideAsync();
 
   return (
     <>
-      <StatusBar style="dark" />
-      <Slot />
+      <StatusBar />
+
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <ThemeProvider theme={theme}>
+            <Slot />
+          </ThemeProvider>
+        </PersistGate>
+      </Provider>
     </>
   )
 }
